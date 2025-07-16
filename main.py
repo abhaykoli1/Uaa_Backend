@@ -2,6 +2,7 @@
 from mongoengine import connect
 from fastapi import FastAPI
 import uvicorn
+from mangum import Mangum
 
 from AvBigBuddy.AvCounters.routes import AvCounterRoutes
 from AvBigBuddy.AvServices.routes import AvServiceRoute
@@ -16,14 +17,12 @@ from samplepapers.routes import sampleroutes
 from sampleCategory.routes import sampleCategoryRoutes
 from serive.routes import serviceroutes
 from fastapi.middleware.cors import CORSMiddleware
-
 from counters.routes import counterRoutes
-
-
 from user.routes import useroutes
 
 
 connect('UaaWebsitemain', host="mongodb+srv://avbigbuddy:nZ4ATPTwJjzYnm20@cluster0.wplpkxz.mongodb.net/UaaWebsitemain")
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -50,8 +49,11 @@ app.include_router(contactroutes.router, tags=["contact query"])
 app.include_router(homePageRoutes.router, tags=["Home page query"])
 
 
+# For Vercel handler
+handler = Mangum(app)
 
 import uvicorn
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8080, reload=True)
+
